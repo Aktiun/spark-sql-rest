@@ -1,0 +1,161 @@
+[{
+    "name": "incident_number",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "date_of_call",
+    "type": "date",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "cal_year",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "time_of_call",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "hour_of_call",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "timestamp_of_call",
+    "type": "timestamp",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "incident_group",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "stop_code_description",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "special_service_type",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "property_category",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "property_type",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "address_qualifier",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "postcode_full",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "postcode_district",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "borough_code",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "borough_name",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "proper_case",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "ward_code",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "ward_name",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "ward_name_new",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "easting_m",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "northing_m",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "easting_rounded",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "northing_rounded",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "frs",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "incident_station_ground",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "first_pump_arriving_attendance_time",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "first_pump_arriving_deployed_from_station",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "second_pump_arriving_attendance_time",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "second_pump_arriving_deployed_from_station",
+    "type": "string",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "num_stations_with_pumps_attending",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}, {
+    "name": "num_pumps_attending",
+    "type": "integer",
+    "nullable": true,
+    "metadata": {}
+}]
