@@ -2,6 +2,7 @@ package com.aktiun.adt.spark.provider;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TimeZone;
@@ -36,6 +37,9 @@ public class ApplicationConfig {
 
 	@Value("${parquet.path:classpath:datasources/*.parquet}")
 	private String parquetPath;
+	
+	@Value("${parquet.tablenames}")
+	private String parquetTablenames;
 
 	@Bean
     public SparkConf sparkConf() {
@@ -122,16 +126,40 @@ public class ApplicationConfig {
     		
     		try {
 				// get the list of all Parquet paths
-				List<String> paths = Arrays.asList(parquetPath.split(","));
-				String[] array = paths.stream().toArray(String[]::new);
-				Dataset<Row> table = sparkSession.sqlContext().read().parquet(array);
-				table.createOrReplaceTempView("DA_IRS_1989_2016_State_Zip_County_AllNoAGI_geo_pivot");
-				sparkSession.sqlContext().cacheTable("DA_IRS_1989_2016_State_Zip_County_AllNoAGI_geo_pivot");
+				List<TablePath> tablePaths = obtainTablePaths();
+				for (TablePath tablePath : tablePaths) {
+					Dataset<Row> table = sparkSession.sqlContext().read().parquet(tablePath.getPathArray());
+					table.createOrReplaceTempView(tablePath.getName());
+					sparkSession.sqlContext().cacheTable(tablePath.getName());
+				}
     		} catch (Exception e) {
     			e.printStackTrace();
     		}
     		
         return sparkSession;
+	}
+
+	private List<TablePath> obtainTablePaths() {
+		List<TablePath> tablepaths = new ArrayList<TablePath>();
+		List<String> paths = Arrays.asList(parquetPath.split(","));
+		if (!parquetTablenames.isEmpty()) {
+			List<String> tables = Arrays.asList(parquetTablenames.split(","));
+			for (String tableStr : tables) {
+				TablePath tablepath = new TablePath();
+				tablepath.setName(tableStr);
+				for (String path : paths) {
+					if (path.contains(tableStr)) {
+						tablepath.addToPaths(path);
+					}
+				}
+				tablepaths.add(tablepath);
+			}
+		} else {
+			System.out.println("Please define the parquet.tablenames property.  It is a comma separated list of table names.\n");
+			System.out.println("Note that a parquet file path will be considered belonging of a table if the table name is in the file path.\n");
+		}
+
+		return tablepaths;
 	}
 	
     @Bean
