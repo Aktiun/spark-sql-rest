@@ -2,6 +2,8 @@ package com.aktiun.adt.spark.provider;
 
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.spark.SparkConf;
@@ -119,15 +121,13 @@ public class ApplicationConfig {
                     .getOrCreate();
     		
     		try {
-    			// get the list of all Parquet files
-    			Resource[] resources = resourceResolver.getResources(parquetPath); 
-    			for(Resource res : resources) {
-					String name = res.getFilename().replace(".parquet", "");
-					Dataset<Row> table = sparkSession.sqlContext().read().parquet(res.getURI().toString());
-					table.createOrReplaceTempView(name);
-					sparkSession.sqlContext().cacheTable(name);
-    			}
-    		} catch (IOException e) {
+				// get the list of all Parquet paths
+				List<String> paths = Arrays.asList(parquetPath.split(","));
+				String[] array = paths.stream().toArray(String[]::new);
+				Dataset<Row> table = sparkSession.sqlContext().read().parquet(array);
+				table.createOrReplaceTempView("DA_IRS_1989_2016_State_Zip_County_AllNoAGI_geo_pivot");
+				sparkSession.sqlContext().cacheTable("DA_IRS_1989_2016_State_Zip_County_AllNoAGI_geo_pivot");
+    		} catch (Exception e) {
     			e.printStackTrace();
     		}
     		
