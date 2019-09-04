@@ -38,7 +38,7 @@ public class ApplicationConfig {
 	@Value("${parquet.path:classpath:datasources/*.parquet}")
 	private String parquetPath;
 	
-	@Value("${parquet.tablenames}")
+	@Value("${parquet.tablenames:}")
 	private String parquetTablenames;
 
 	@Bean
@@ -155,8 +155,9 @@ public class ApplicationConfig {
 				tablepaths.add(tablepath);
 			}
 		} else {
-			System.out.println("Please define the parquet.tablenames property.  It is a comma separated list of table names.\n");
-			System.out.println("Note that a parquet file path will be considered belonging of a table if the table name is in the file path.\n");
+			String msg = "Please define the parquet.tablenames property.  It is a comma separated list of table names.\n";
+			msg += "Note that a parquet file path will be considered belonging of a table if the table name is in the file path.\n";
+			throw new RuntimeException(msg);
 		}
 
 		return tablepaths;
