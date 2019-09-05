@@ -56,7 +56,7 @@ First, you need to tell the service to load parquet files by updating your appli
 #filetype=csv
 filetype=parquet
 parquet.path=file:///opt/datasources/table1/partition1/,file:///opt/datasources/table1/partition2/,file:///opt/datasources/table2/partition1/
-#parquet.tablenames=table1,table2
+parquet.tablenames=table1,table2
 ```
 
 Note that loading csv files is the default so you need to explicitely set the `filetype` property.  You should also configure the paths where your parquet files are located as well as the table names to use for those paths as shown in the example above.  
