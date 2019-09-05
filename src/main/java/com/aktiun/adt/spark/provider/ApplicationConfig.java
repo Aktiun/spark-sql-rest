@@ -2,6 +2,9 @@ package com.aktiun.adt.spark.provider;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.TimeZone;
 
 import org.apache.spark.SparkConf;
@@ -34,6 +37,9 @@ public class ApplicationConfig {
 
 	@Value("${parquet.path:classpath:datasources/*.parquet}")
 	private String parquetPath;
+	
+	@Value("${parquet.tablenames:}")
+	private String parquetTablenames;
 
 	@Bean
     public SparkConf sparkConf() {
@@ -119,19 +125,42 @@ public class ApplicationConfig {
                     .getOrCreate();
     		
     		try {
-    			// get the list of all Parquet files
-    			Resource[] resources = resourceResolver.getResources(parquetPath); 
-    			for(Resource res : resources) {
-					String name = res.getFilename().replace(".parquet", "");
-					Dataset<Row> table = sparkSession.sqlContext().read().parquet(res.getURI().toString());
-					table.createOrReplaceTempView(name);
-					sparkSession.sqlContext().cacheTable(name);
-    			}
-    		} catch (IOException e) {
+				// get the list of all Parquet paths
+				List<TablePath> tablePaths = obtainTablePaths();
+				for (TablePath tablePath : tablePaths) {
+					Dataset<Row> table = sparkSession.sqlContext().read().parquet(tablePath.getPathArray());
+					table.createOrReplaceTempView(tablePath.getName());
+					sparkSession.sqlContext().cacheTable(tablePath.getName());
+				}
+    		} catch (Exception e) {
     			e.printStackTrace();
     		}
     		
         return sparkSession;
+	}
+
+	private List<TablePath> obtainTablePaths() {
+		List<TablePath> tablepaths = new ArrayList<TablePath>();
+		List<String> paths = Arrays.asList(parquetPath.split(","));
+		if (!parquetTablenames.isEmpty()) {
+			List<String> tables = Arrays.asList(parquetTablenames.split(","));
+			for (String tableStr : tables) {
+				TablePath tablepath = new TablePath();
+				tablepath.setName(tableStr);
+				for (String path : paths) {
+					if (path.contains(tableStr)) {
+						tablepath.addToPaths(path);
+					}
+				}
+				tablepaths.add(tablepath);
+			}
+		} else {
+			String msg = "\n\nPlease define the parquet.tablenames property.  It is a comma separated list of table names.\n";
+			msg += "Table names should be substrings of their respective file paths.\n\n";
+			throw new RuntimeException(msg);
+		}
+
+		return tablepaths;
 	}
 	
     @Bean
