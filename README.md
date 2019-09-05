@@ -43,7 +43,7 @@ csv.path=classpath:datasources/*.csv
 
 By default, drop your CSV file on src/main/resources/datasources/ folder.  You can also update the csv.path with the location of your choice as shown in the commented out line.  You must do this when working with the executable binary.
 
-## Important points about your CSV files
+### Important points about your CSV files
 * They MUST include a Header with the name for the fields
 * DATE columns must use the dash (-) separator and the date must be in the following format: YYYY-MM-DD (year-month-day)
 * TIMESTAMP columns must use a dash (-) separator for the date portion of the timestamp, and the date must be in the following format: YYYY-MM-DD (year-month-day). The hh:mm:ss (hour-minute-second) portion of the timestamp must use a colon (:) separator.
@@ -55,13 +55,11 @@ First, you need to tell the service to load parquet files by updating your appli
 ```
 #filetype=csv
 filetype=parquet
+parquet.path=file:///opt/datasources/table1/partition1/,file:///opt/datasources/table1/partition2/,file:///opt/datasources/table2/partition1/
+#parquet.tablenames=table1,table2
 ```
 
-Note that loading csv files is the default so you need to explicitely set the `filetype` property.  You should also configure the path where your parquet files are located by updating your application properties file as shown below:
-
-```
-parquet.path=file:///opt/datasources/*.parquet
-```
+Note that loading csv files is the default so you need to explicitely set the `filetype` property.  You should also configure the paths where your parquet files are located as well as the table names to use for those paths as shown in the example above.  
 
 ## How to test
 
