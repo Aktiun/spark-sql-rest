@@ -1,4 +1,4 @@
-## Spark SQL over REST service
+# Spark SQL over REST service
 
 The *Spark SQL over REST* service exposes a Spark SQL local context over REST to enable querying CSV and Parquet files using [Spark SQL](http://spark.apache.org/docs/latest/sql-programming-guide.html).
 
