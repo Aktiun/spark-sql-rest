@@ -155,8 +155,8 @@ public class ApplicationConfig {
 				tablepaths.add(tablepath);
 			}
 		} else {
-			String msg = "Please define the parquet.tablenames property.  It is a comma separated list of table names.\n";
-			msg += "Note that a parquet file path will be considered belonging of a table if the table name is in the file path.\n";
+			String msg = "\n\nPlease define the parquet.tablenames property.  It is a comma separated list of table names.\n";
+			msg += "Table names should be substrings of their respective file paths.\n\n";
 			throw new RuntimeException(msg);
 		}
 
