@@ -185,6 +185,18 @@ public class ApplicationConfig {
     			}
     		} catch (Exception e) {
     			e.printStackTrace();
+			}
+			
+			try {
+				// get the list of all Parquet paths
+				List<TablePath> tablePaths = obtainTablePaths();
+				for (TablePath tablePath : tablePaths) {
+					Dataset<Row> table = sparkSession.sqlContext().read().parquet(tablePath.getPathArray());
+					table.createOrReplaceTempView(tablePath.getName());
+					sparkSession.sqlContext().cacheTable(tablePath.getName());
+				}
+    		} catch (Exception e) {
+    			e.printStackTrace();
     		}
     		
 		
