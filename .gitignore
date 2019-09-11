@@ -10,6 +10,7 @@
 
 # VSCode
 .vscode
+.vscode/*
 
 # Mac
 .DS_Store
@@ -18,6 +19,3 @@ spark-warehouse/
 # Maven
 log/
 target/
-
-# Avoid commit the private API Key
-src/main/resources/application.properties
