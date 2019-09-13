@@ -1,7 +1,5 @@
 package com.aktiun.adt.spark.provider;
 
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -40,7 +38,7 @@ public class ApplicationConfig {
 	@Autowired
 	private ResourcePatternResolver resourceResolver;
 
-	@Value("${csv.path:classpath:datasources/*.csv}")
+	@Value("${csv.path:}")
 	private String csvPath;
 
 	@Value("${parquet.path:}")
@@ -83,6 +81,13 @@ public class ApplicationConfig {
 		// Avoid local time assumption for any time
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
 	
+		if (checkIfNoConfig()) {
+			String message = "No valid config provided.";
+
+			System.err.println(message);
+			System.exit(0);
+		}
+
 		// Create new Spark Session
 		SparkSession sparkSession = SparkSession
 				.builder()
@@ -94,6 +99,10 @@ public class ApplicationConfig {
 		createParquetDatasets(sparkSession);
 
         return sparkSession;
+	}
+
+	private boolean checkIfNoConfig(){
+		return isBlank(csvPath) && isBlank(parquetPath) && isBlank(parquetTablenames);
 	}
 
 	private boolean isBlank(String string) {
