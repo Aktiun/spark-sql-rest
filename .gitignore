@@ -2,11 +2,15 @@
 .classpath
 .project
 .settings/
-
+.
 # Intellij
 .idea/
 *.iml
 *.iws
+
+# VSCode
+.vscode
+.vscode/*
 
 # Mac
 .DS_Store
