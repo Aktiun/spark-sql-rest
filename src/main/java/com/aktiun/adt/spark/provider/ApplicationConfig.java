@@ -1,5 +1,7 @@
 package com.aktiun.adt.spark.provider;
 
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -31,10 +33,9 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
-
 @Configuration
 public class ApplicationConfig {
-	
+
 	@Autowired
 	private ResourcePatternResolver resourceResolver;
 
@@ -43,7 +44,7 @@ public class ApplicationConfig {
 
 	@Value("${parquet.path:}")
 	private String parquetPath;
-	
+
 	@Value("${parquet.tablenames:}")
 	private String parquetTablenames;
 
@@ -54,33 +55,29 @@ public class ApplicationConfig {
 	private String awsSecretkey;
 
 	@Bean
-    public SparkConf sparkConf() {
-        SparkConf sparkConf = new SparkConf()
-                .setAppName("Spark SQL Provider")
-                .setMaster("local")
-     		    .set("spark.sql.session.timeZone", "UTC")
-                .set("spark.sql.inMemoryColumnarStorage.compressed", "true")
-                .set("spark.sql.inMemoryColumnarStorage.batchSize", "20000")
-				.set("spark.sql.shuffle.partitions","10")
-				.set("spark.hadoop.fs.s3a.impl","org.apache.hadoop.fs.s3a.S3AFileSystem")
-				.set("spark.hadoop.fs.s3a.access.key",awsAccesskey)
-				.set("spark.hadoop.fs.s3a.secret.key",awsSecretkey);
-        
-        return sparkConf;
-    }
-	
+	public SparkConf sparkConf() {
+		SparkConf sparkConf = new SparkConf().setAppName("Spark SQL Provider").setMaster("local")
+				.set("spark.sql.session.timeZone", "UTC").set("spark.sql.inMemoryColumnarStorage.compressed", "true")
+				.set("spark.sql.inMemoryColumnarStorage.batchSize", "20000").set("spark.sql.shuffle.partitions", "10")
+				.set("spark.hadoop.fs.s3a.impl", "org.apache.hadoop.fs.s3a.S3AFileSystem")
+				.set("spark.hadoop.fs.s3a.access.key", awsAccesskey)
+				.set("spark.hadoop.fs.s3a.secret.key", awsSecretkey);
+
+		return sparkConf;
+	}
+
 	private CsvSchema schema = new CsvSchema();
 
-    @Bean
-    public JavaSparkContext javaSparkContext() {
-        return new JavaSparkContext(sparkConf());
-    }
+	@Bean
+	public JavaSparkContext createJavaSparkContext() {
+		return new JavaSparkContext(sparkConf());
+	}
 
 	@Bean
-    public SparkSession sparkSession() {
+	public SparkSession sparkSession() {
 		// Avoid local time assumption for any time
 		TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
-	
+
 		if (checkIfNoConfig()) {
 			String message = "No valid config provided.";
 
@@ -89,56 +86,82 @@ public class ApplicationConfig {
 		}
 
 		// Create new Spark Session
-		SparkSession sparkSession = SparkSession
-				.builder()
-				.sparkContext(javaSparkContext().sc())
-				.appName("Spark SQL Provider")
-				.getOrCreate();
+		SparkSession sparkSession = SparkSession.builder().sparkContext(createJavaSparkContext().sc())
+				.appName("Spark SQL Provider").getOrCreate();
 
 		createCsvDatasets(sparkSession);
 		createParquetDatasets(sparkSession);
 
-        return sparkSession;
+		return sparkSession;
 	}
 
-	private boolean checkIfNoConfig(){
+	private boolean checkIfNoConfig() {
 		return isBlank(csvPath) && isBlank(parquetPath) && isBlank(parquetTablenames);
 	}
 
 	private boolean isBlank(String string) {
 		return string.trim().isEmpty();
-	} 
+	}
+
+	private List<String> obtainS3Files() {
+		List<String> result = new ArrayList<String>();
+		AWSCredentials credentials = new BasicAWSCredentials(awsAccesskey, awsSecretkey);
+
+		String bucket = csvPath.replace("s3a://", "").split("/")[0];
+
+		AmazonS3 s3client = AmazonS3ClientBuilder.standard()
+				.withCredentials(new AWSStaticCredentialsProvider(credentials)).withRegion(Regions.US_EAST_1).build();
+
+		ObjectListing objectListing = s3client.listObjects(bucket);
+		for (S3ObjectSummary os : objectListing.getObjectSummaries()) {
+			if (os.getKey().endsWith(".csv")) {
+				result.add(os.getKey());
+			}
+		}
+		return result;
+	}
+
+	private void createTablesForCSVFiles(SparkSession sparkSession, List<String> files, List<String> urls)
+			throws UnsupportedEncodingException, IOException 
+			{
+		Boolean isS3 = csvPath.startsWith("s3a://");
+		String path = csvPath.endsWith("/*.csv") ? csvPath.replace("/*.csv", "") : csvPath;
+		for(int i = 0; i < files.size(); i++) {
+			String res = files.get(i);
+			String name = res.replace(".csv", "").replace("-", "_");			
+			StructType csvSchema = null;
+			try {
+				csvSchema = this.schema.GetSchema(name);
+			} catch (ParseException e) { } 
+			
+			// Load CSV file
+			DataFrameReader df = sparkSession.read()
+					.format("com.databricks.spark.csv")
+					.option("timestampFormat","yyyy-MM-dd HH:mm:ssZ")
+					.option("dateFormat","yyyy-MM-dd HH:mm:ssZ")
+					.option("header", true)
+					.option("inferSchema", true);
+			
+			// Set a custom schema if there is any defined for the source
+			if (csvSchema != null)
+				df.schema(csvSchema);
+			
+			// Create table
+			Dataset<Row> table = isS3 ? df.load(path + "/" + res) : df.load(urls.get(i));
+			table.createOrReplaceTempView(name);
+			sparkSession.sqlContext().cacheTable(name);
+		}
+	}
 
 	private void createCsvDatasets(SparkSession sparkSession) {
 		if (isBlank(csvPath)) return;
-		String path = csvPath.endsWith("/*.csv") ? csvPath.replace("/*.csv", "") : csvPath;
-
 		try {
 			List<String> files = new ArrayList<>();
 			List<String> urls = new ArrayList<>();
 			Boolean isS3 = csvPath.startsWith("s3a://");
 
-			
 			if (isS3) {
-				AWSCredentials credentials = new BasicAWSCredentials(
-					awsAccesskey,
-					awsSecretkey
-				);
-
-				String bucket = csvPath.replace("s3a://", "").split("/")[0];
-		
-				AmazonS3 s3client = AmazonS3ClientBuilder
-					.standard()
-					.withCredentials(new AWSStaticCredentialsProvider(credentials))
-					.withRegion(Regions.US_EAST_1)
-					.build();
-
-				ObjectListing objectListing = s3client.listObjects(bucket);
-				for(S3ObjectSummary os : objectListing.getObjectSummaries()) {
-					if (os.getKey().endsWith(".csv")) {
-						files.add(os.getKey());
-					}
-				}
+				files.addAll(obtainS3Files());
 			} else {
 				// get the list of all CSV files
 				Resource[] resources = resourceResolver.getResources(csvPath);
@@ -148,31 +171,8 @@ public class ApplicationConfig {
 				}
 			}
 
-			for(int i = 0; i < files.size(); i++) {
-				String res = files.get(i);
-				String name = res.replace(".csv", "").replace("-", "_");			
-				StructType csvSchema = null;
-				try {
-					csvSchema = this.schema.GetSchema(name);
-				} catch (ParseException e) { } 
-				
-				// Load CSV file
-				DataFrameReader df = sparkSession.read()
-						.format("com.databricks.spark.csv")
-						.option("timestampFormat","yyyy-MM-dd HH:mm:ssZ")
-						.option("dateFormat","yyyy-MM-dd HH:mm:ssZ")
-						.option("header", true)
-						.option("inferSchema", true);
-				
-				// Set a custom schema if there is any defined for the source
-				if (csvSchema != null)
-					df.schema(csvSchema);
-				
-				// Create table
-				Dataset<Row> table = isS3 ? df.load(path + "/" + res) : df.load(urls.get(i));
-				table.createOrReplaceTempView(name);
-				sparkSession.sqlContext().cacheTable(name);
-			}
+			createTablesForCSVFiles(sparkSession, files, urls);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
