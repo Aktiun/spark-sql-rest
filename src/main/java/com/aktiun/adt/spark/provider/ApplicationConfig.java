@@ -43,7 +43,7 @@ public class ApplicationConfig {
 	@Value("${csv.path:classpath:datasources/*.csv}")
 	private String csvPath;
 
-	@Value("${parquet.path:classpath:datasources/*.parquet}")
+	@Value("${parquet.path:}")
 	private String parquetPath;
 	
 	@Value("${parquet.tablenames:}")
@@ -96,8 +96,12 @@ public class ApplicationConfig {
         return sparkSession;
 	}
 
+	private boolean isBlank(String string) {
+		return string.trim().isEmpty();
+	} 
+
 	private void createCsvDatasets(SparkSession sparkSession) {
-		if (csvPath.isBlank()) return;
+		if (isBlank(csvPath)) return;
 		String path = csvPath.endsWith("/*.csv") ? csvPath.replace("/*.csv", "") : csvPath;
 
 		try {
@@ -167,14 +171,14 @@ public class ApplicationConfig {
 
 	private void createParquetDatasets(SparkSession sparkSession) {
 		try {
-			if ((!parquetPath.isBlank() && parquetTablenames.isBlank()) ||
-				(parquetPath.isBlank() && !parquetTablenames.isBlank())) {
+			if ((!isBlank(parquetPath) && isBlank(parquetTablenames)) ||
+				(isBlank(parquetPath) && !isBlank(parquetTablenames))) {
 					throw new Exception("If do you want to read parquet files the parquet.path and " +
 						"parquet.tablenames configuration properties have to be defined, otherwise " +
 						"left both undefined.");
 				}
 
-			if (!parquetPath.isBlank() && !parquetTablenames.isBlank()){
+			if (!isBlank(parquetPath) && !isBlank(parquetTablenames)){
 				List<TablePath> tablePaths = obtainTablePaths();
 				for (TablePath tablePath : tablePaths) {
 					Dataset<Row> table = sparkSession.sqlContext().read().parquet(tablePath.getPathArray());
