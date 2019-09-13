@@ -63,9 +63,9 @@ parquet.tablenames=table1,table2
 
 Note that you should configure the paths where your parquet files are located as well as the table names to use for those paths as shown in the example above. If a path contains a table name, it is loaded as part of that table.
 
-## Load data direct from Amazon S3 buckets
+## Read data directly from Amazon S3 buckets
 
-You can load the data directly from Amazon S3 buckets if instead of file do you use the s3a protocol on the data source URL. For example.
+You can read the data directly from Amazon S3 buckets by specifying the s3a protocol on the source paths. For example.
 
 ```ini
 csv.path=s3a://aktiun-data/*.csv
@@ -75,7 +75,7 @@ parquet.tablenames=DA_IRS_1989_2016_State_Zip_County_AllNoAGI_geo_pivot
 
 ### Amazon S3 autentication
 
-Note that do you have to avoid putting your Amazon S3 credentials on any file that could be committed to a public repository so do you can pass your credentials as parameters in the following way:
+To connect to S3 you will need to provide your access key and secret as specified below.  **NOTE**: Do not write your Amazon S3 credentials on any file that could be committed to a public repository.  Instead, pass your credentials as parameters in the following way:
 
 ```bash
 java -Daws.accesskey=YOUR_ACCESS_KEY -Daws.secretkey=YOUR_SECRET_KEY -jar adt.spark.provider-0.0.1-SNAPSHOT.jar
