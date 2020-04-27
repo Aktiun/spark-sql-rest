@@ -9,6 +9,7 @@ public class QueryResponse implements Serializable {
 
 	private String code;
 	private String message;
+    private String schema;
 	private List<String> data;
 	public String getCode() {
 		return code;
@@ -27,6 +28,12 @@ public class QueryResponse implements Serializable {
 	}
 	public void setData(List<String> data) {
 		this.data = data;
+	}
+	public String getSchema() {
+		return this.schema;
+	}
+	public void setSchema(String schema) {
+		this.schema = schema;
 	}
 	
 }
