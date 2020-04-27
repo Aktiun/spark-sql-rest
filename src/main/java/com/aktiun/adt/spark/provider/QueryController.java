@@ -28,8 +28,11 @@ public class QueryController {
 		System.out.println("Query=" + request.getQuery());
 		try {
 			Dataset<Row> result = sparkSession.sqlContext().sql(request.getQuery());
-			List<String> data = result.na().fill("null").toJSON().collectAsList();
-			response.setData(data);
+			List<String> rows = result.na().fill("null").toJSON().collectAsList();
+      		String schema = result.schema().json();
+
+			response.setData(rows);
+			response.setSchema(schema);
 			response.setCode("200");
 			response.setMessage("");
 		} catch (Exception e) {
