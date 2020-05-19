@@ -32,6 +32,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import java.util.HashMap;
 
 @Configuration
 public class ApplicationConfig {
@@ -129,9 +130,10 @@ public class ApplicationConfig {
 		for(int i = 0; i < files.size(); i++) {
 			String res = files.get(i);
 			String name = res.replace(".csv", "").replace("-", "_");			
-			StructType csvSchema = null;
+			HashMap<String, Object> csvSchema = null;
 			try {
 				csvSchema = this.schema.GetSchema(name);
+
 			} catch (ParseException e) { } 
 			
 			// Load CSV file
@@ -143,8 +145,17 @@ public class ApplicationConfig {
 					.option("inferSchema", true);
 			
 			// Set a custom schema if there is any defined for the source
-			if (csvSchema != null)
-				df.schema(csvSchema);
+			// as well as custom formats
+			if (csvSchema != null) {
+				df.schema((StructType) csvSchema.get("schema"));
+				Object dformat = csvSchema.get("dateFormat");
+				Object tformat = csvSchema.get("timestampFormat");
+
+				if (tformat != null) 
+					df.option("timestampFormat", tformat.toString());
+				if (dformat != null) 
+					df.option("dateFormat", dformat.toString());
+			}
 			
 			// Create table
 			Dataset<Row> table = isS3 ? df.load(path + "/" + res) : df.load(urls.get(i));

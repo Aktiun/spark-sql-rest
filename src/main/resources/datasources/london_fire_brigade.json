@@ -1,161 +1,131 @@
 [{
     "name": "incident_number",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "date_of_call",
     "type": "date",
-    "nullable": true,
-    "metadata": {}
+    "format": "MM/dd/yyyy",
+    "nullable": true
 }, {
     "name": "cal_year",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "time_of_call",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "hour_of_call",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "timestamp_of_call",
     "type": "timestamp",
-    "nullable": true,
-    "metadata": {}
+    "format": "MM/dd/yyyy HH:mm:ss",
+    "nullable": true
 }, {
     "name": "incident_group",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "stop_code_description",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "special_service_type",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "property_category",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "property_type",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "address_qualifier",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "postcode_full",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "postcode_district",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "borough_code",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "borough_name",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "proper_case",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "ward_code",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "ward_name",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "ward_name_new",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "easting_m",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "northing_m",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "easting_rounded",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "northing_rounded",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "frs",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "incident_station_ground",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "first_pump_arriving_attendance_time",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "first_pump_arriving_deployed_from_station",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "second_pump_arriving_attendance_time",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "second_pump_arriving_deployed_from_station",
     "type": "string",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "num_stations_with_pumps_attending",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }, {
     "name": "num_pumps_attending",
     "type": "integer",
-    "nullable": true,
-    "metadata": {}
+    "nullable": true
 }]
