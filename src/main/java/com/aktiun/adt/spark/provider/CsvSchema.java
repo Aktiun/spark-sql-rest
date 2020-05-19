@@ -11,6 +11,7 @@ import org.apache.spark.sql.types.StructType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import java.util.HashMap;
 
 public class CsvSchema{
 
@@ -18,40 +19,57 @@ public class CsvSchema{
 		super();
 	}
 	
-    public  StructType GetSchema(String jsonSchema) throws org.json.simple.parser.ParseException, UnsupportedEncodingException, IOException {
-		try {
-			InputStream inputStream = this.getClass()
-											.getClassLoader()
-											.getResourceAsStream("datasources/" +jsonSchema + ".json");
-			JSONParser jsonParser = new JSONParser();
-			JSONArray fields = (JSONArray) jsonParser.parse(new InputStreamReader(inputStream, "UTF-8"));
-			
-	        return this.BuildSchema(fields);
-		} catch(Exception e) {
-			System.out.println("[----CUSTOM LOG----]:  INCORRECT SCHEMA OR NOT FOUND FOR: " + jsonSchema + ".csv");
-		}
+    public HashMap<String, Object> GetSchema(String jsonSchema) throws org.json.simple.parser.ParseException, UnsupportedEncodingException, IOException {
+      try {
+        InputStream inputStream = this.getClass()
+                        .getClassLoader()
+                        .getResourceAsStream("datasources/" +jsonSchema + ".json");
+        JSONParser jsonParser = new JSONParser();
+        JSONArray fields = (JSONArray) jsonParser.parse(new InputStreamReader(inputStream, "UTF-8"));
+        
+        System.out.println("[----CUSTOM LOG----]:  LOADING SCHEMA FOR: " + jsonSchema + ".csv");
+        return this.BuildSchema(fields, jsonSchema);
+      } catch(Exception e) {
+        System.out.println("[----CUSTOM LOG----]:  INCORRECT SCHEMA OR NOT FOUND FOR: " + jsonSchema + ".csv");
+      }
 
-		return null;
+      return null;
     }
     
    
-    private StructType BuildSchema(JSONArray fields) {       
+    private HashMap<String, Object> BuildSchema(JSONArray fields, String schemaName) {       
+        HashMap<String, Object> schema = new HashMap<>();
         StructType customSchema = new StructType();
         
-		for (int i = 0; i < fields.size(); i++){
+        for (int i = 0; i < fields.size(); i++){
+            JSONObject field =(JSONObject) fields.get(i);
+            String name = (String) field.get("name");
+            String type = (String) field.get("type");
+            String format = (String) field.get("format");
+            Boolean nullable = (Boolean) field.get("nullable");
+            DataType dtype = this.getDataType(type);
 
-    	 		JSONObject field =(JSONObject) fields.get(i);
-    	 		String name = (String) field.get("name");
-    	 		String type = (String) field.get("type");
-    	 		Boolean nullable = (Boolean) field.get("nullable");
-    	 		DataType dtype = this.getDataType(type);
-    	 		
-    	 		
-    	        StructField sfield = new StructField(name, dtype, nullable, Metadata.empty());
-    			customSchema = customSchema.add(sfield);
-		}
-		
-        return customSchema;   
+            if (format != null) {
+              String key = type + "Format";
+
+              if(schema.containsKey(key)) {
+                String lastFormat = (String) schema.get(key);
+
+                if (!lastFormat.equals(format)) {
+                  System.out.println("[----CUSTOM LOG----]:  MULTIPLE FORMAT FOR " +
+                  type.toUpperCase() + " FOUND IN: " + schemaName + ".csv");
+                } 
+              } else {
+                schema.put(key, format);
+              }
+            }
+
+            StructField sfield = new StructField(name, dtype, nullable, Metadata.empty());
+            customSchema = customSchema.add(sfield);
+        }
+
+        schema.put("schema", customSchema);
+        return schema;
     }
 
 	
