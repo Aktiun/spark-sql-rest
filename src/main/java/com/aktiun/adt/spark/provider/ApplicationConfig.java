@@ -129,7 +129,7 @@ public class ApplicationConfig {
 		String path = csvPath.endsWith("/*.csv") ? csvPath.replace("/*.csv", "") : csvPath;
 		for(int i = 0; i < files.size(); i++) {
 			String res = files.get(i);
-			String name = res.replace(".csv", "").replace("-", "_");			
+			String name = res.replace(".csv", "").replace("-", "_").replace(" ", "_").replace("/", "_");			
 			HashMap<String, Object> csvSchema = null;
 			try {
 				csvSchema = this.schema.GetSchema(name);
