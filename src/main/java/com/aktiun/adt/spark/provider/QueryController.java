@@ -28,6 +28,12 @@ public class QueryController {
 		System.out.println("Query=" + request.getQuery());
 		try {
 			Dataset<Row> result = sparkSession.sqlContext().sql(request.getQuery());
+
+			System.out.println("====================================Result====================================");
+//			print the results one by one
+			result.show();
+			System.out.println("============================================================================");
+
 			List<String> rows = result.na().fill("null").toJSON().collectAsList();
       		String schema = result.schema().json();
 
