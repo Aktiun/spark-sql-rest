@@ -142,7 +142,8 @@ public class ApplicationConfig {
 					.option("timestampFormat","yyyy-MM-dd HH:mm:ssZ")
 					.option("dateFormat","yyyy-MM-dd HH:mm:ssZ")
 					.option("header", true)
-					.option("inferSchema", true);
+					.option("inferSchema", true)
+					.option("enforceSchema", true);;
 			
 			// Set a custom schema if there is any defined for the source
 			// as well as custom formats
