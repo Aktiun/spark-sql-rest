@@ -87,7 +87,9 @@ public class ApplicationConfig {
 		}
 
 		// Create new Spark Session
-		SparkSession sparkSession = SparkSession.builder().sparkContext(createJavaSparkContext().sc())
+		SparkSession sparkSession = SparkSession.builder()
+				.sparkContext(createJavaSparkContext().sc())
+				.config("spark.sql.legacy.timeParserPolicy", "LEGACY")
 				.appName("Spark SQL Provider").getOrCreate();
 
 		createCsvDatasets(sparkSession);
