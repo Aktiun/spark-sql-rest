@@ -1,0 +1,194 @@
+[
+{
+    "name": "fare",
+    "type": "double",
+    "nullable": true
+},
+{
+    "name": "pickup_census_tract",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "trip_end_hour",
+    "type": "integer",
+    "nullable": true
+},
+{
+    "name": "trip_start_hour",
+    "type": "integer",
+    "nullable": true
+},
+{
+    "name": "trip_seconds",
+    "type": "integer",
+    "nullable": true
+},
+{
+    "name": "trip_start_day_of_week",
+    "type": "integer",
+    "nullable": true
+},
+{
+    "name": "trip_miles",
+    "type": "integer",
+    "nullable": true
+},
+{
+    "name": "extras",
+    "type": "double",
+    "nullable": true
+},
+{
+    "name": "dropoff_census_tract",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "tips",
+    "type": "double",
+    "nullable": true
+},
+{
+    "name": "tolls",
+    "type": "double",
+    "nullable": true
+},
+{
+    "name": "dropoff_community_area",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "pickup_district",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "company",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "dropoff_community_area_desc",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "trip_end_timestamp",
+    "type": "timestamp",
+    "format": "yyyy-MM-dd HH:mm:ss.SSS",
+    "nullable": true
+}, 
+{
+    "name": "trip_end_day_of_week",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "pickup_community_area_desc",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "trip_id",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "trip_total",
+    "type": "double",
+    "nullable": true
+},
+{
+    "name": "pickup_location_lat",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "pickup_location_lon",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "trip_start_timestamp",
+    "type": "timestamp",
+    "format": "yyyy-MM-dd HH:mm:ss.SSS",
+    "nullable": true
+},
+{
+    "name": "community_areas",
+    "type": "integer",
+    "nullable": true
+},
+{
+    "name": "trip_minutes",
+    "type": "double",
+    "nullable": true
+},
+{
+    "name": "pickup_community_area",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "payment_type",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "dropoff_district",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "taxi_id",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "dropoff_location_lat",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "dropoff_location_lon",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "dropoff_latitude",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "pickup_latitude",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "pickup_longitude",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "dropoff_longitude",
+    "type": "string",
+    "nullable": true
+},
+{
+    "name": "trip_start_timestamp_epoch",
+    "type": "long",
+    "nullable": true
+},
+{
+    "name": "trip_start_date_string",
+    "type": "string",
+    "nullable": true
+}]
+
+
+
+
+
+
